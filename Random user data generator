@@ -1,0 +1,62 @@
+from random import randrange
+from datetime import timedelta, datetime
+import string
+import random
+import uuid
+
+out_path = "Table1.csv"
+with open(out_path, "a") as file:
+    file.write("name, age, city, zipcode, phone, state_code, order_id" + "\n")
+
+def random_date(start, end):
+    delta = end - start
+    int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
+    random_second = randrange(int_delta)
+    return start + timedelta(seconds=random_second)
+
+d1 = datetime.strptime('1/1/2020 1:30 PM', '%m/%d/%Y %I:%M %p')
+d2 = datetime.strptime('1/1/2025 4:50 AM', '%m/%d/%Y %I:%M %p')
+
+def random_state_code():
+    state_codes = [
+        'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+        'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+        'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+        'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+        'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+    ]
+    random_code = random.choice(state_codes)
+    return random_code
+
+def random_product_code():
+    prod_codes = [
+        'Yamaha', 'Honda', 'BMW', 'Ducati', 'Harley-Davidson', 'Kawasaki', 'Indian', 'KTM', 'Aprilia', 'Augusta'
+    ]
+    random_code = random.choice(prod_codes)
+    return random_code
+
+i = 0
+while i < 1000:
+    numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+
+    order_id = str(uuid.uuid4())
+    name = ''.join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=3))
+    age = [random.choice(numbers) for _ in range(2)]
+    str_age = [str(num) for num in age]
+    joined_age = "".join(str_age)
+    product = random_product_code()
+    state = random_state_code()
+    city = ''.join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=5))
+    phone = [random.choice(numbers) for _ in range(10)]
+    str_phone = [str(num) for num in phone]
+    joined_phone = "".join(str_phone)
+    order_date = random_date(d1, d2).strftime("%Y-%m-%d %H:%M:%S")
+    zipcode = [random.choice(numbers) for _ in range(5)]
+    str_zipcode = [str(num) for num in zipcode]
+    joined_zipcode = "".join(str_zipcode)
+
+    with open(out_path, "a") as file:
+        file.write(name + "," + joined_age + "," + city + "," + joined_zipcode + "," + joined_phone + "," + state + "," + order_id + "\n")
+        i += 1
+
+print("Loop ended")

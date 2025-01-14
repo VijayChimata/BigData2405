@@ -1,0 +1,117 @@
+Creating the two tables.
+
+CREATE TABLE Table1 (
+    name VARCHAR(3),
+    age VARCHAR(2),
+    city VARCHAR(5),
+    zipcode VARCHAR(5),
+    phone VARCHAR(10),
+    state_code VARCHAR(2),
+    order_id UNIQUEIDENTIFIER
+);
+
+
+CREATE TABLE Table2 (
+    state_code VARCHAR(2),
+    county VARCHAR(5),
+    order_date DATETIME,
+    phone VARCHAR(10),
+    order_id UNIQUEIDENTIFIER,
+    name VARCHAR(3)
+);
+
+
+Join the two tables on State_code and name (3)  to create a single table with all the rows and also columns from both the tables. Name the table table3
+
+use batch2405;
+
+SELECT 
+    t1.name, 
+    t1.age, 
+    t1.city, 
+    t1.zipcode, 
+    t1.phone AS phone_t1, 
+    t1.state_code, 
+    t1.order_id AS order_id_t1, 
+    t2.county, 
+    t2.order_date, 
+    t2.phone AS phone_t2, 
+    t2.order_id AS order_id_t2
+INTO 
+    Table3
+FROM 
+    Table1 t1
+JOIN 
+    Table2 t2
+ON 
+    t1.state_code = t2.state_code 
+    AND t1.name = t2.name;
+
+
+From table 3, write sql queries to do the following.
+
+a) Create a table table5 with records from states TX, CA, AZ, NY, FL
+use batch2405;
+
+SELECT * INTO table5
+FROM TABLE3
+WHERE STATE_CODE IN ('TX', 'CA', 'AZ', 'NY', 'FL');
+
+b) To find the State with most orders using order_id
+
+SELECT TOP 1 state_code, COUNT(order_id) AS order_count
+FROM TABLE3
+GROUP BY state_code
+ORDER BY order_count DESC;
+
+
+c) To find the State with most orders by Year using order_id
+SELECT TOP 1 
+    YEAR(order_date) AS year, 
+    state_code, 
+    COUNT(order_id) AS order_count
+FROM TABLE3
+GROUP BY YEAR(order_date), state_code
+ORDER BY order_count DESC;
+
+
+d) To find the State with most orders by Year and also City using order_id
+SELECT TOP 1 
+    YEAR(order_date) AS year, 
+    state_code, 
+    city, 
+    COUNT(order_id) AS order_count
+FROM TABLE3
+GROUP BY YEAR(order_date), state_code, city
+ORDER BY order_count DESC;
+
+
+e) To find the oldest person to have placed more than 10 orders.
+SELECT TOP 1 name, age, COUNT(order_id) AS order_count
+FROM TABLE3
+GROUP BY name, age
+HAVING COUNT(order_id) > 10
+ORDER BY age DESC;
+
+If there are no results find the oldest person to have placed more than 3 orders.
+SELECT TOP 1 name, age, COUNT(order_id) AS order_count
+FROM TABLE3
+GROUP BY name, age
+HAVING COUNT(order_id) > 3
+ORDER BY age DESC;
+
+
+f) Create a query to find the length of the order_id from table 3 and also split it into parts and display the length of each part. 
+SELECT 
+    order_id,
+    LEN(CAST(order_id AS VARCHAR)) AS total_length,
+    SUBSTRING(CAST(order_id AS VARCHAR), 1, 8) AS part1,
+    LEN(SUBSTRING(CAST(order_id AS VARCHAR), 1, 8)) AS part1_length,
+    SUBSTRING(CAST(order_id AS VARCHAR), 9, 4) AS part2,
+    LEN(SUBSTRING(CAST(order_id AS VARCHAR), 9, 4)) AS part2_length,
+    SUBSTRING(CAST(order_id AS VARCHAR), 13, 4) AS part3,
+    LEN(SUBSTRING(CAST(order_id AS VARCHAR), 13, 4)) AS part3_length,
+    SUBSTRING(CAST(order_id AS VARCHAR), 17, 4) AS part4,
+    LEN(SUBSTRING(CAST(order_id AS VARCHAR), 17, 4)) AS part4_length
+FROM TABLE3;
+  
